@@ -1,10 +1,13 @@
 package com.example.androidapitask
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.SimpleAdapter
 import com.example.androidapitask.databinding.ActivityMainBinding
 import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
 import okio.IOException
 import org.json.JSONObject
 
@@ -17,8 +20,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.searchButton.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+        }
+
         // ホットペッパーAPIのURL
-        val apiUrl = "https://webservice.recruit.co.jp/hotpepper/gourmet/v1/"
+        val apiUrl = "https://webservice.recruit.co.jp/hotpepper/gourmet/v1/?key=318a1003a75ce344&large_area=Z011&budget+codeB008&results_available&format=json"
 
         // APIキー
         val apiKey = "318a1003a75ce344"
@@ -31,11 +39,16 @@ class MainActivity : AppCompatActivity() {
         val keyword = "ラーメン"
 
         // リクエストURLの作成
-        val url = "$apiUrl?key=$apiKey&lat=$latitude&lng=$longitude&range=3&keyword=$keyword"
+        val url = "$apiUrl&key=$apiKey&lat=$latitude&lng=$longitude&range=3&keyword=$keyword"
 
         // リクエストの送信
         val request = Request.Builder().url(url).build()
-        val client = OkHttpClient()
+//        val client = OkHttpClient()
+        val client = OkHttpClient.Builder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("API Error", e.toString())
@@ -73,7 +86,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         return restaurants
+        
     }
+
 
 
 }

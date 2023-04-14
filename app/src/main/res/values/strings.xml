@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AndroidApiTask</string>
+    <string name="resultText">検索結果</string>
+    <string name="finishbutton">戻る</string>
+    <string name="search_for_restaurants">入力してください</string>
+    <string name="search">検索</string>
 </resources>
